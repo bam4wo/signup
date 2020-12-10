@@ -34,9 +34,17 @@ public class SignUp extends AppCompatActivity {
         textInputEditTextPassword = findViewById(R.id.password);
         textInputEditTextEmail = findViewById(R.id.email);
         buttonSignUp = findViewById(R.id.buttonSignUp);
-        textViewLogin = findViewById(R.id.loginText);
+        textViewLogin = findViewById(R.id.signUpText);
         progressBar = findViewById(R.id.progress);
 
+        textViewLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),Login.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
