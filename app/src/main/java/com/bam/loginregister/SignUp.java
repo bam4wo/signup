@@ -18,6 +18,16 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.vishnusivadas.advanced_httpurlconnection.FetchData;
 import com.vishnusivadas.advanced_httpurlconnection.PutData;
 
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 public class SignUp extends AppCompatActivity {
     TextInputEditText textInputEditTextFullname, textInputEditTextUsername, textInputEditTextPassword, textInputEditTextEmail;
     Button buttonSignUp;
@@ -36,6 +46,8 @@ public class SignUp extends AppCompatActivity {
         buttonSignUp = findViewById(R.id.buttonSignUp);
         textViewLogin = findViewById(R.id.signUpText);
         progressBar = findViewById(R.id.progress);
+
+        handleSSLHandshake(); //呼叫忽略https的證書校驗方法
 
         textViewLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +117,37 @@ public class SignUp extends AppCompatActivity {
         });
 
 
+    }
+
+    //忽略https的證書校驗
+    public static void handleSSLHandshake() {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                @Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }};
+
+            SSLContext sc = SSLContext.getInstance("TLS");
+            // trustAllCerts信任所有的证书
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+        } catch (Exception ignored) {
+        }
     }
 
 
